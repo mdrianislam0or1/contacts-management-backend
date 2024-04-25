@@ -100,17 +100,77 @@ const deleteContactController = async (
   }
 };
 
-const deleteContactsController = async (
+const markAsFavoriteController = async (
   req: Request,
   res: Response
 ): Promise<void> => {
   try {
-    const contactIds: string[] = req.body.contactIds;
-    await ContactsService.deleteContacts(contactIds);
+    const contactId = req.params.id;
+    const isFavorite = req.body.isFavorite;
+
+    const updatedContact = await ContactsService.markFavorite(
+      contactId,
+      isFavorite
+    );
+
+    res.status(httpStatus.OK).json({
+      success: true,
+      message: "Contact marked as favorite successfully",
+      data: updatedContact,
+    });
+  } catch (error: any) {
+    res.status(httpStatus.INTERNAL_SERVER_ERROR).json({
+      success: false,
+      errorMessage: error.message,
+      errorDetails: error,
+    });
+  }
+};
+
+const getFavoriteContactsController = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  try {
+    const favoriteContacts = await ContactsService.getFavoriteContacts();
     sendResponse(res, {
       statusCode: httpStatus.OK,
       success: true,
-      message: "Contacts deleted successfully",
+      message: "Favorite contacts retrieved successfully",
+      data: favoriteContacts,
+    });
+  } catch (error: any) {
+    sendResponse(res, {
+      statusCode: httpStatus.INTERNAL_SERVER_ERROR,
+      success: false,
+      errorMessage: error.message,
+      errorDetails: error,
+    });
+  }
+};
+
+const getSingleContactController = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  try {
+    const contactId = req.params.id;
+    const contact = await ContactsService.getSingleContact(contactId);
+
+    if (!contact) {
+      sendResponse(res, {
+        statusCode: httpStatus.NOT_FOUND,
+        success: false,
+        errorMessage: "Contact not found",
+      });
+      return;
+    }
+
+    sendResponse(res, {
+      statusCode: httpStatus.OK,
+      success: true,
+      message: "Contact details fetched successfully",
+      data: contact,
     });
   } catch (error: any) {
     sendResponse(res, {
@@ -127,5 +187,7 @@ export const ContactsController = {
   getAllContactsController,
   updateContactController,
   deleteContactController,
-  deleteContactsController,
+  markAsFavoriteController,
+  getFavoriteContactsController,
+  getSingleContactController,
 };

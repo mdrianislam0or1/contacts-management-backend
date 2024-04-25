@@ -7,6 +7,7 @@ const ContactSchema: Schema = new Schema({
   phoneNumber: { type: String, required: true },
   address: { type: String, required: true },
   profilePicture: { type: String, required: true },
+  isFavorite: { type: Boolean, default: false },
 });
 
 export default mongoose.model<Contact>("Contact", ContactSchema);

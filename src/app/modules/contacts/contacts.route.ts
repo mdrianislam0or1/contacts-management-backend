@@ -24,5 +24,17 @@ router.delete(
   ContactsController.deleteContactController
 );
 
-router.post("/delete-contacts", ContactsController.deleteContactsController);
+router.put(
+  "/mark-as-favorite/:id",
+
+  ContactsController.markAsFavoriteController
+);
+
+router.get(
+  "/favorite-contacts",
+  ContactsController.getFavoriteContactsController
+);
+
+router.get("/contact/:id", ContactsController.getSingleContactController);
+
 export const ContactsRouter = router;

@@ -5,4 +5,5 @@ export interface Contact {
   phoneNumber: string;
   address: string;
   profilePicture: string;
+  isFavorite: boolean;
 }

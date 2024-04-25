@@ -18,19 +18,41 @@ const updateContact = async (
   });
 };
 
+const getSingleContact = async (contactId: string): Promise<Contact | null> => {
+  return await contactsModel.findById(contactId);
+};
+
 const deleteContact = async (contactId: string): Promise<Contact | null> => {
   await contactsModel.findByIdAndDelete(contactId);
   return null;
 };
 
-const deleteContacts = async (contactIds: string[]): Promise<void> => {
-  await contactsModel.deleteMany({ _id: { $in: contactIds } });
+const markFavorite = async (
+  contactId: string,
+  isFavorite: boolean
+): Promise<Contact | null> => {
+  try {
+    const updatedContact = await contactsModel.findByIdAndUpdate(
+      contactId,
+      { $set: { isFavorite } },
+      { new: true }
+    );
+    return updatedContact;
+  } catch (error) {
+    throw new Error("Failed to mark contact as favorite");
+  }
+};
+
+const getFavoriteContacts = async (): Promise<Contact[]> => {
+  return await contactsModel.find({ isFavorite: true });
 };
 
 export const ContactsService = {
   AddContact,
   getAllContacts,
   updateContact,
+  getSingleContact,
   deleteContact,
-  deleteContacts,
+  markFavorite,
+  getFavoriteContacts,
 };
